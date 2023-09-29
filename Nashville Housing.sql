@@ -1,4 +1,12 @@
---Standardize the Date Format
+/*
+Nashville Housing Project
+
+Utilized functions on the data for deleting unused columns, altering the table, populating the table, parse function 
+
+*/
+
+
+--STANDARDIZE THE DATE FORMAT
 
 ALTER TABLE NashvilleHousing
 Add SaleDateConverted Date;
@@ -12,7 +20,7 @@ FROM PortfolioProject.dbo.NashvilleHousing
 
 
 
--- Populate Property Address data
+-- POPULATE PROPERTY ADDRESS DATA
 
 Select a.PropertyAddress, a.ParcelID, b.PropertyAddress, b.ParcelID, ISNULL(a.PropertyAddress, b.PropertyAddress)
 FROM PortfolioProject.dbo.NashvilleHousing a
@@ -20,7 +28,6 @@ JOIN PortfolioProject.dbo.NashvilleHousing b
    ON a.ParcelID = b.ParcelID
    AND a.[UniqueID ] <> b.[UniqueID ]
    WHERE a.PropertyAddress IS Null
-
 
 UPDATE a
 SET PropertyAddress = ISNULL(a.PropertyAddress, b.PropertyAddress)
@@ -33,8 +40,7 @@ WHERE a.PropertyAddress IS NULL
 
 
 
-
---Breaking out the Address into Individual Columns (Address, City, State)
+--BREAKING OUT THE ADDRESS INTO INDIVIDUAL COLUMNS (ADDRESS, CITY, STATE)
 
 SELECT 
 SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) as Address,
@@ -56,21 +62,17 @@ SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddres
 
 
 
-
-
-
---Using the ParseName Function
+	
+--USING THE ParseName FUNCTION
 
 SELECT OwnerAddress
 from PortfolioProject.dbo.NashvilleHousing
-
 
 Select 
 PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3) as Address,
 PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2) as City,
 PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1) as State
 FROM PortfolioProject.dbo.NashvilleHousing
-
 
 
 ALTER TABLE NashvilleHousing
@@ -95,13 +97,12 @@ SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1)
 
 
 
---Changing Y and N to Yes and NO In 'Sold As Vacant' Column
+--CHANGING Y AND N TO YES AND NO IN 'Sold As Vacant' COLUMN
 
 SELECT Distinct(SoldAsVacant), COUNT(SoldAsVacant)
 From PortfolioProject.dbo.NashvilleHousing
 GROUP BY SoldAsVacant
 ORDER BY 2
-
 
 Select SoldAsVacant,
  CASE
@@ -110,7 +111,6 @@ Select SoldAsVacant,
   ELSE SoldAsVacant
  END
 FROM PortfolioProject.dbo.NashvilleHousing
-
 
 Update NashvilleHousing
 SET SoldAsVacant = CASE
@@ -122,9 +122,7 @@ SET SoldAsVacant = CASE
 
 
 
-
-
- --Removing Duplicates
+ --REMOVING DUPLICATES
  
  WITH RowNumCTE AS(
  Select *,
@@ -147,8 +145,7 @@ Where row_num >1
 
 
 
-
---Deleting Unused Columns
+--DELETING UNUSED COLUMNS
 
 ALTER TABLE NashvilleHousing
 DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress

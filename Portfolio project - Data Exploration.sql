@@ -1,9 +1,18 @@
+/* 
+
+Covid 19 Data Exploration
+
+Utilized joins, Aggregate functions, CTE's, Temp tables, Converting Data types
+
+*/
+
+
 SELECT *
 FROM PortfolioProject.dbo.CovidDeaths
 ORDER BY 3,4
 
 
--- This Shows the Death Percentage in Nigeria in order of dates
+-- SHOWING THE DEATH PERCENTAGE IN NIGERIA IN ORDER OF DATES
 
 SELECT location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 AS DeathPercentage
 FROM PortfolioProject.dbo.CovidDeaths
@@ -13,7 +22,7 @@ ORDER BY 1,2
 
 
 
--- Looking at Countries with the highest infection rate
+-- COUNTRIES WITH THE HIGHEST INFECTION RATE
 
 SELECT location, population, MAX(total_cases) as HighestInfectedCount, MAX((total_cases/population))*100 AS PercentPopulationInfected
 FROM PortfolioProject.dbo.CovidDeaths
@@ -24,7 +33,7 @@ ORDER BY PercentPopulationInfected DESC
 
 
 
--- Showing countries with the highest Death count per population
+-- COUNTRIES WITH THE HIGHEST DEATH COUNT PER POPULATION
 
 SELECT location, SUM(cast(new_deaths as int)) as TotalDeathCount
 FROM PortfolioProject.dbo.CovidDeaths
@@ -47,7 +56,7 @@ ORDER BY TotalDeathCount DESC
 
 
 
--- Showing the continents with the highest death counts
+-- CONTINENTS WITH THE HIGHEST DEATH COUNTS
 
 SELECT continent, MAX(cast(total_deaths as int)) as TotalDeathCount
 FROM PortfolioProject.dbo.CovidDeaths
@@ -72,7 +81,7 @@ ORDER BY 1,2
 
 
 
--- Total Death Percentage across the World
+-- TOTAL DEATH PERCENTAGE ACROSS THE WORLD
 
 SELECT SUM(new_cases) as TotalCases, SUM(cast(new_deaths as int)) as TotalDeaths, 
 CASE
@@ -86,7 +95,7 @@ ORDER BY 1,2
 
 
 
--- Looking at Total population against Vaccinations
+-- POPULATION AGAINST VACCINATIONS
 
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 FROM PortfolioProject.dbo.CovidDeaths dea
@@ -99,8 +108,7 @@ ORDER BY 2,3
 
 
 
-
--- Looking at the Total population Vaccinated
+-- TOTAL POPULATION VACCINATED
 
 SELECT dea.location, dea.population, MAX(CAST(people_vaccinated as bigint)) as TotalPopulationVaccinated, 
 (MAX(CAST(people_vaccinated as bigint))/population)*100 as PercentVaccinatedPopulation
@@ -116,7 +124,7 @@ ORDER BY PercentVaccinatedPopulation DESC
 
 
 
--- USE CTE to find percent Vaccinated
+-- USE CTE TO CALCULATE THE PERCENT VACCINATED ON Partition by
 
 With PopvsVac (continent, location, date, population, new_vaccinations, RollingPeopleVaccinated)
 as
@@ -137,7 +145,7 @@ FROM PopvsVac
 
 
 
--- USING TEMP TABLE
+-- USING TEMP TABLE TO PERFORM THE QUERY ABOVE ON Partition by
 
 DROP TABLE IF EXISTS #PercentPopulationVaccinated 
 CREATE TABLE #PercentPopulationVaccinated
@@ -166,7 +174,7 @@ FROM #PercentPopulationVaccinated
 
 
 
---Creating View To store Data for Visualization
+--CREATING VIEW TO STORE DATA FOR VISUALIZATION
 
 create View PercentPopulationVaccinated as
 select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations, 

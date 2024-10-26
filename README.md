@@ -6,3 +6,4 @@ In this folder I developed and fine-tuned the deep learning models to detect pne
 - InceptionV3 :heavy_check_mark:
 - Basic CNN :heavy_check_mark:
 - EfficientNet
+
